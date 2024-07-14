@@ -28,14 +28,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.upload.MultipartRequestHandler;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 
@@ -60,6 +61,15 @@ public class UploadAction extends Action
         throws Exception {
 
         if (form instanceof UploadForm) {
+            UploadForm theForm = (UploadForm) form;
+
+            final MultipartRequestHandler multipartHandler = form.getMultipartRequestHandler();
+
+            // Was this transaction cancelled?
+            if (isCancelled(request)) {
+                multipartHandler.rollback();
+                return mapping.findForward("home");
+            }
 
             //this line is here for when the input page is upload-utf8.jsp,
             //it sets the correct character encoding for the response
@@ -68,8 +78,6 @@ public class UploadAction extends Action
             {
                 response.setContentType("text/html; charset=utf-8");
             }
-
-            UploadForm theForm = (UploadForm) form;
 
             //retrieve the text data
             String text = theForm.getTheText();
@@ -84,11 +92,11 @@ public class UploadAction extends Action
 
             // Following is to test fix for STR-3173
             if (file == null) {
-                final FormFile[] files = form.getMultipartRequestHandler().getFileElements().get("otherFile");
+                final FormFile[] files = multipartHandler.getFileElements().get("otherFile");
                 fileCount = files.length;
                 file = fileCount == 0 ? null : files[0];
             } else {
-                final FormFile[] files = form.getMultipartRequestHandler().getFileElements().get("theFile");
+                final FormFile[] files = multipartHandler.getFileElements().get("theFile");
                 fileCount = files.length;
             }
 
@@ -150,8 +158,8 @@ public class UploadAction extends Action
             request.setAttribute("size", size);
             request.setAttribute("data", data);
 
-            //destroy the temporary file created
-            file.destroy();
+            //destroy temporary files
+            multipartHandler.finish();
 
             //return a forward to display.jsp
             return mapping.findForward("display");

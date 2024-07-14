@@ -25,13 +25,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.struts.Globals;
 import org.apache.struts.config.ActionConfig;
 import org.apache.struts.config.ExceptionConfig;
@@ -42,6 +35,13 @@ import org.apache.struts.util.MessageResources;
 import org.apache.struts.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * <p><strong>RequestProcessor</strong> contains the processing logic that the
@@ -805,7 +805,7 @@ public class RequestProcessor implements Serializable {
         }
 
         RequestUtils.populate(form, mapping.getPrefix(), mapping.getSuffix(),
-            request);
+            request, RequestUtils.populateMultipartPost(request));
 
         // Set the cancellation request attribute if appropriate
         if ((request.getParameter(Globals.CANCEL_PROPERTY) != null)

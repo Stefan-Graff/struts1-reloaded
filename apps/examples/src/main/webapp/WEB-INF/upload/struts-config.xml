@@ -23,8 +23,12 @@
         <form-bean name="uploadForm"
                    type="org.apache.struts.webapp.upload.UploadForm"/>
     </form-beans>
-    <action-mappings>
 
+    <global-forwards>
+        <forward name="home" path="/welcome.do" module=""/>
+    </global-forwards>
+
+    <action-mappings>
         <action path="/upload" forward="/upload.jsp"/>
 
         <!-- Upload Action -->
@@ -33,6 +37,7 @@
                 name="uploadForm"
                 scope="request"
                 validate="true"
+                cancellable="true"
                 input="input">
             <forward name="input" path="/upload.jsp"/>
             <forward name="display" path="/display.jsp"/>
@@ -47,6 +52,7 @@
                 name="uploadForm"
                 scope="request"
                 validate="true"
+                cancellable="true"
                 input="input">
             <forward name="input" path="/upload2.jsp"/>
             <forward name="display" path="/display.jsp"/>
@@ -61,6 +67,7 @@
                 name="uploadForm"
                 scope="request"
                 validate="true"
+                cancellable="true"
                 input="input">
             <forward name="input" path="/upload-multi.jsp"/>
             <forward name="display" path="/display.jsp"/>

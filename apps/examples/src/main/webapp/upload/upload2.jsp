@@ -46,7 +46,7 @@
     <p>If you checked the box to write to a file, please specify the file path here: <br />
     <html:text property="filePath"  errorStyle="background-color: yellow"/></p>
     <p>
-    <html:submit />
+    <html:submit />&nbsp;<html:cancel />
     </p>
     </html:form>
 

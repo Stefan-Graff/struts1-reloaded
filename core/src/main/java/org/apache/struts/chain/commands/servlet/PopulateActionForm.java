@@ -20,7 +20,6 @@
  */
 package org.apache.struts.chain.commands.servlet;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.chain.commands.AbstractPopulateActionForm;
@@ -28,6 +27,7 @@ import org.apache.struts.chain.contexts.ActionContext;
 import org.apache.struts.chain.contexts.ServletActionContext;
 import org.apache.struts.config.ActionConfig;
 import org.apache.struts.config.PopulateEvent;
+import org.apache.struts.upload.MultipartRequestHandler;
 import org.apache.struts.util.RequestUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,13 +44,13 @@ public class PopulateActionForm extends AbstractPopulateActionForm {
     // ------------------------------------------------------- Protected Methods
 
     protected void populate(ActionContext context, ActionConfig actionConfig,
-        ActionForm actionForm)
+        ActionForm actionForm, MultipartRequestHandler multipartHandler)
         throws Exception {
         ServletActionContext saContext = (ServletActionContext) context;
         HttpServletRequest request = saContext.getRequest();
 
         RequestUtils.populate(actionForm, actionConfig.getPrefix(),
-            actionConfig.getSuffix(), request);
+            actionConfig.getSuffix(), request, multipartHandler);
     }
 
     protected void reset(ActionContext context, ActionConfig actionConfig,
@@ -59,12 +59,6 @@ public class PopulateActionForm extends AbstractPopulateActionForm {
         HttpServletRequest request = saContext.getRequest();
 
         actionForm.reset((ActionMapping) actionConfig, request);
-
-        // Set the multipart class
-        if (actionConfig.getMultipartClass() != null) {
-            saContext.getRequestScope().put(Globals.MULTIPART_KEY,
-                actionConfig.getMultipartClass());
-        }
     }
 
     // ---------------------------------------------------------- Helper Methods
@@ -143,6 +137,10 @@ public class PopulateActionForm extends AbstractPopulateActionForm {
                 }
             } else if (attribute.equals(PopulateEvent.CHAIN)) {
                 if (RequestUtils.isRequestChained(request)) {
+                    return true;
+                }
+            } else if (attribute.equals(PopulateEvent.CANCEL)) {
+                if (RequestUtils.isRequestCancelled(request)) {
                     return true;
                 }
             } else if (attribute.equals(PopulateEvent.REQUEST)) {

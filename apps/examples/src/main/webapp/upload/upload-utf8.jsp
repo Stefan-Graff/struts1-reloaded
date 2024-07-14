@@ -41,6 +41,7 @@
     <html:text property="filePath" />
     <br />
     <br />
-    <html:submit /></html:form>
+    <html:submit />&nbsp;<html:cancel />
+    </html:form>
   </body>
 </html>

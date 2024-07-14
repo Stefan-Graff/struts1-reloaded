@@ -97,6 +97,8 @@
             <subsection name="Issue Tracking" id="Highlight">
 <h4>Bug</h4>
 <ul>
+<li>Second attempt to fix for &quot;#32 - html:cancel taglib not working in case of MultipartRequestWrapper&quot;</li>
+<li>Fix for &quot;#32 - html:cancel taglib not working in case of MultipartRequestWrapper&quot; thanks to nrmnrm</li>
 <li>Tiles: Correct &quot;I18nFactorySet.initFactory&quot; under windows</li>
 <li>With <strong>Release Candidate 1 &amp; 2</strong>:
     <ul>
@@ -117,6 +119,7 @@
 
 <h4>Improvement</h4>
 <ul>
+<li>Add Method &quot;RequestUtils.isRequestCancelled&quot;</li>
 <li>With <strong>Release Candidate 1 &amp; 2</strong>:
     <ul>
         <li>Replace &quot;maven-bundle-plugin&quot; 5.1.9 with &quot;bnd-maven-plugin&quot; 7.0.0</li>

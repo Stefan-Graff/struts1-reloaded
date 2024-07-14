@@ -23,19 +23,19 @@ package org.apache.struts.action;
 import java.io.Serializable;
 import java.util.Locale;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.struts.Globals;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.util.ModuleUtils;
 import org.apache.struts.util.RequestUtils;
 import org.apache.struts.util.TokenProcessor;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * <p>An <strong>Action</strong> is an adapter between the contents of an
@@ -403,7 +403,7 @@ public class Action implements Serializable {
      *         <code>false</code> otherwise.
      */
     protected boolean isCancelled(HttpServletRequest request) {
-        return (request.getAttribute(Globals.CANCEL_KEY) != null);
+        return RequestUtils.isRequestCancelled(request);
     }
 
     /**
