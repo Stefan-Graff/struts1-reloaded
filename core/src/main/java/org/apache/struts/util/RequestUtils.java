@@ -1212,6 +1212,22 @@ public class RequestUtils {
     }
 
     /**
+     * Verifies whether current request is cancelled or not.
+     *
+     * @param request current HTTP request
+     * @return {@code true} if the request is cancelled; otherwise {@code false}
+     * @since Struts 1.5
+     */
+    public static boolean isRequestCancelled(HttpServletRequest request) {
+        final Object value = request.getAttribute(Globals.CANCEL_KEY);
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Verifies whether the current request is a multipart-post-request.
      *
      * @param request current HTTP request

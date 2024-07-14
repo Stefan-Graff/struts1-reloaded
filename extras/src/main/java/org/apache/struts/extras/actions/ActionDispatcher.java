@@ -24,11 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.apache.struts.Globals;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -37,8 +32,13 @@ import org.apache.struts.chain.contexts.ActionContext;
 import org.apache.struts.chain.contexts.ServletActionContext;
 import org.apache.struts.dispatcher.Dispatcher;
 import org.apache.struts.util.MessageResources;
+import org.apache.struts.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>Action <i>helper</i> class that dispatches to a public method in an
@@ -496,7 +496,7 @@ public class ActionDispatcher implements Dispatcher {
      * @see org.apache.struts.taglib.html.CancelTag
      */
     protected boolean isCancelled(HttpServletRequest request) {
-        return (request.getAttribute(Globals.CANCEL_KEY) != null);
+        return RequestUtils.isRequestCancelled(request);
     }
 
     /**

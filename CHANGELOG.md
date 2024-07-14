@@ -2,6 +2,7 @@
 
 ## 1.5.0-RC3 / YYYY-MM-DD
 
+* Add Method `RequestUtils.isRequestCancelled`
 * Fix for `#32 - html:cancel taglib not working in case of MultipartRequestWrapper` thanks to nrmnrm
 * Tiles: Correct `I18nFactorySet.initFactory` under windows
 * Set Version to 1.5.0-SNAPSHOT
