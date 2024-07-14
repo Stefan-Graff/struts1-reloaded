@@ -33,6 +33,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.upload.MultipartRequestHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,12 +60,17 @@ public class UploadAction extends Action
                                  HttpServletResponse response)
         throws Exception {
 
-        // Was this transaction cancelled?
-        if (isCancelled(request)) {
-            return mapping.findForward("home");
-        }
-
         if (form instanceof UploadForm) {
+            UploadForm theForm = (UploadForm) form;
+
+            final MultipartRequestHandler multipartHandler = form.getMultipartRequestHandler();
+
+            // Was this transaction cancelled?
+            if (isCancelled(request)) {
+                multipartHandler.rollback();
+                return mapping.findForward("home");
+            }
+
             //this line is here for when the input page is upload-utf8.jsp,
             //it sets the correct character encoding for the response
             String encoding = request.getCharacterEncoding();
@@ -72,8 +78,6 @@ public class UploadAction extends Action
             {
                 response.setContentType("text/html; charset=utf-8");
             }
-
-            UploadForm theForm = (UploadForm) form;
 
             //retrieve the text data
             String text = theForm.getTheText();
@@ -88,11 +92,11 @@ public class UploadAction extends Action
 
             // Following is to test fix for STR-3173
             if (file == null) {
-                final FormFile[] files = form.getMultipartRequestHandler().getFileElements().get("otherFile");
+                final FormFile[] files = multipartHandler.getFileElements().get("otherFile");
                 fileCount = files.length;
                 file = fileCount == 0 ? null : files[0];
             } else {
-                final FormFile[] files = form.getMultipartRequestHandler().getFileElements().get("theFile");
+                final FormFile[] files = multipartHandler.getFileElements().get("theFile");
                 fileCount = files.length;
             }
 
@@ -155,7 +159,7 @@ public class UploadAction extends Action
             request.setAttribute("data", data);
 
             //destroy temporary files
-            form.getMultipartRequestHandler().finish();
+            multipartHandler.finish();
 
             //return a forward to display.jsp
             return mapping.findForward("display");

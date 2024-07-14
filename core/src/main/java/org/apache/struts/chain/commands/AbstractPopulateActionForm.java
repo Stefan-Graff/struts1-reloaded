@@ -27,6 +27,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.chain.contexts.ActionContext;
 import org.apache.struts.chain.contexts.ServletActionContext;
 import org.apache.struts.config.ActionConfig;
+import org.apache.struts.upload.MultipartRequestHandler;
 import org.apache.struts.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,37 +66,41 @@ public abstract class AbstractPopulateActionForm extends ActionCommandBase {
 
         ServletActionContext saContext = (ServletActionContext) actionCtx;
         HttpServletRequest request = saContext.getRequest();
-        boolean isRequestMultipartPost =
-                RequestUtils.isRequestMultipartPost(request);
 
-        if (isRequestMultipartPost) {
-            // Processing for multipart-post-requests
+        final boolean isReset = isReset(actionCtx, actionConfig);
+
+        // Set the multipart class
+        if (isReset && actionConfig.getMultipartClass() != null) {
+            saContext.getRequestScope().put(Globals.MULTIPART_KEY,
+                actionConfig.getMultipartClass());
+        }
+
+        final MultipartRequestHandler multipartHandler = RequestUtils.populateMultipartPost(request);
+
+        // First determine if the request was cancelled
+        handleCancel(actionCtx, actionConfig, actionForm);
+
+        // Is there a form bean for this request?
+        if (actionForm == null) {
+            if (multipartHandler != null) {
+                multipartHandler.rollback();
+            }
+            return CONTINUE_PROCESSING;
+        }
+
+        // Reset the form bean only if configured so
+        if (isReset) {
             log.debug("Reseting form bean '{}'",  actionConfig.getName());
             reset(actionCtx, actionConfig, actionForm);
+        }
 
+        // Populate the form bean only if configured so
+        if (isPopulate(actionCtx, actionConfig)) {
             log.debug("Populating form bean '{}'", actionConfig.getName());
-            populate(actionCtx, actionConfig, actionForm);
-
-            handleCancel(actionCtx, actionConfig, actionForm);
+            populate(actionCtx, actionConfig, actionForm, multipartHandler);
         } else {
-            // First determine if the request was cancelled
-            handleCancel(actionCtx, actionConfig, actionForm);
-
-            // Is there a form bean for this request?
-            if (actionForm == null) {
-                return CONTINUE_PROCESSING;
-            }
-
-            // Reset the form bean only if configured so
-            if (isReset(actionCtx, actionConfig)) {
-                log.debug("Reseting form bean '{}'",  actionConfig.getName());
-                reset(actionCtx, actionConfig, actionForm);
-            }
-
-            // Populate the form bean only if configured so
-            if (isRequestMultipartPost || isPopulate(actionCtx, actionConfig)) {
-                log.debug("Populating form bean '{}'", actionConfig.getName());
-                populate(actionCtx, actionConfig, actionForm);
+            if (multipartHandler != null) {
+                multipartHandler.rollback();
             }
         }
 
@@ -150,7 +155,8 @@ public abstract class AbstractPopulateActionForm extends ActionCommandBase {
      * @throws Exception On an unexpected error
      */
     protected abstract void populate(ActionContext context,
-        ActionConfig actionConfig, ActionForm actionForm)
+        ActionConfig actionConfig, ActionForm actionForm,
+        MultipartRequestHandler multipartHandler)
         throws Exception;
 
     // original implementation casting context to WebContext is not safe

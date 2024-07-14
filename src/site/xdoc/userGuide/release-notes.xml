@@ -97,6 +97,7 @@
             <subsection name="Issue Tracking" id="Highlight">
 <h4>Bug</h4>
 <ul>
+<li>Second attempt to fix for &quot;#32 - html:cancel taglib not working in case of MultipartRequestWrapper&quot;</li>
 <li>Fix for &quot;#32 - html:cancel taglib not working in case of MultipartRequestWrapper&quot; thanks to nrmnrm</li>
 <li>Tiles: Correct &quot;I18nFactorySet.initFactory&quot; under windows</li>
 <li>With <strong>Release Candidate 1 &amp; 2</strong>:

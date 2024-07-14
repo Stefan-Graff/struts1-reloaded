@@ -339,6 +339,51 @@ public class RequestUtils {
 
     /**
      * <p>Populate the properties of the specified JavaBean from the specified
+     * HTTP request, based on matching each parameter name (plus an optional
+     * prefix and/or suffix) against the corresponding JavaBeans "property
+     * setter" methods in the bean's class. Suitable conversion is done for
+     * argument types as described under <code>setProperties</code>.</p>
+     *
+     * <p>If you specify a non-null <code>prefix</code> and a non-null
+     * <code>suffix</code>, the parameter name must match
+     * <strong>both</strong> conditions for its value(s) to be used in
+     * populating bean properties. If the request's content type is
+     * "multipart/form-data" and the method is "POST", the
+     * <code>HttpServletRequest</code> object will be wrapped in a
+     * <code>MultipartRequestWrapper</code> object.</p>
+     *
+     * @param bean    The JavaBean whose properties are to be set
+     * @param prefix  The prefix (if any) to be prepend to bean property names
+     *                when looking for matching parameters
+     * @param suffix  The suffix (if any) to be appended to bean property
+     *                names when looking for matching parameters
+     * @param request The HTTP request whose parameters are to be used to
+     *                populate bean properties
+     * @throws ServletException if an exception is thrown while setting
+     *                          property values
+     */
+    public static MultipartRequestHandler populateMultipartPost(HttpServletRequest request)
+        throws ServletException {
+
+        MultipartRequestHandler multipartHandler = null;
+        if (isRequestMultipartPost(request)) {
+            // Obtain a MultipartRequestHandler
+            multipartHandler = getMultipartHandler(request);
+
+            if (multipartHandler != null) {
+                multipartHandler.setMapping((ActionMapping) request
+                    .getAttribute(Globals.MAPPING_KEY));
+
+                // Initialize multipart request class handler
+                multipartHandler.handleRequest(request);
+            }
+        }
+
+        return multipartHandler;
+    }
+
+    /**
+     * <p>Populate the properties of the specified JavaBean from the specified
      * HTTP request, based on matching each parameter name against the
      * corresponding JavaBeans "property setter" methods in the bean's class.
      * Suitable conversion is done for argument types as described under
@@ -352,7 +397,7 @@ public class RequestUtils {
      */
     public static void populate(Object bean, HttpServletRequest request)
         throws ServletException {
-        populate(bean, null, null, request);
+        populate(bean, null, null, request, populateMultipartPost(request));
     }
 
     /**
@@ -381,8 +426,9 @@ public class RequestUtils {
      *                          property values
      */
     public static void populate(Object bean, String prefix, String suffix,
-        HttpServletRequest request)
+        HttpServletRequest request, MultipartRequestHandler multipartHandler)
         throws ServletException {
+
         // Build a list of relevant request parameters from this request
         HashMap<String, Object> properties = new HashMap<>();
 
@@ -392,70 +438,49 @@ public class RequestUtils {
         // Map for multipart parameters
         Map<String, Object> multipartParameters = null;
 
-        boolean isMultipart = false;
+        final boolean isMultipart = multipartHandler != null;
 
         if (bean instanceof ActionForm) {
             ((ActionForm) bean).setMultipartRequestHandler(null);
         }
 
-        MultipartRequestHandler multipartHandler = null;
-        if (isRequestMultipartPost(request)) {
+        if (isMultipart) {
             // Get the ActionServletWrapper from the form bean
             ActionServletWrapper servlet = null;
 
             if (bean instanceof ActionForm) {
                 servlet = ((ActionForm) bean).getServletWrapper();
-            } else if (bean != null) {
+            } else {
                 throw new ServletException("bean that's supposed to be "
                     + "populated from a multipart request is not of type "
                     + "\"org.apache.struts.action.ActionForm\", but type "
                     + "\"" + bean.getClass().getName() + "\"");
             }
 
-            // Obtain a MultipartRequestHandler
-            multipartHandler = getMultipartHandler(request);
+            // Set servlet and mapping info
+            servlet.setServletFor(multipartHandler);
 
-            if (multipartHandler != null) {
-                isMultipart = true;
+            //stop here if the maximum length has been exceeded
+            Boolean maxLengthExceeded =
+                (Boolean) request.getAttribute(MultipartRequestHandler.ATTRIBUTE_MAX_LENGTH_EXCEEDED);
 
-                multipartHandler.setMapping((ActionMapping) request
-                    .getAttribute(Globals.MAPPING_KEY));
-
-                // Initialize multipart request class handler
-                multipartHandler.handleRequest(request);
-
-                if (servlet == null) {
-                    multipartHandler.rollback();
-                    return;
-                }
-
-                // Set servlet and mapping info
-                servlet.setServletFor(multipartHandler);
-
-                //stop here if the maximum length has been exceeded
-                Boolean maxLengthExceeded =
-                    (Boolean) request.getAttribute(MultipartRequestHandler.ATTRIBUTE_MAX_LENGTH_EXCEEDED);
-
-                if ((maxLengthExceeded != null)
-                    && (maxLengthExceeded.booleanValue())) {
-
-                    ((ActionForm) bean).setMultipartRequestHandler(multipartHandler);
-                    return;
-                }
-
-                //retrieve form values and put into properties
-                multipartParameters =
-                    getAllParametersForMultipartRequest(request,
-                        multipartHandler);
-                names = Collections.enumeration(multipartParameters.keySet());
+            if ((maxLengthExceeded != null)
+                && (maxLengthExceeded.booleanValue())) {
+                ((ActionForm) bean).setMultipartRequestHandler(multipartHandler);
+                return;
             }
+
+            //retrieve form values and put into properties
+            multipartParameters =
+                getAllParametersForMultipartRequest(request,
+                    multipartHandler);
+            names = Collections.enumeration(multipartParameters.keySet());
         }
 
         if (!isMultipart) {
             names = request.getParameterNames();
         }
 
-        boolean isNotCancelled = true;
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             String stripped = name;
@@ -498,25 +523,16 @@ public class RequestUtils {
             // such as 'org.apache.struts.action.CANCEL'
             if (!(stripped.startsWith("org.apache.struts."))) {
                 properties.put(stripped, parameterValue);
-            } else
-                // Test the cancellation attribute
-                if (Globals.CANCEL_PROPERTY.equals(stripped)
-                || Globals.CANCEL_PROPERTY_X.equals(stripped)) {
-
-                isNotCancelled = false;
-                break;
             }
         }
 
         // Set the corresponding properties of our bean
         try {
-            if (isNotCancelled) {
-                BeanUtils.populate(bean, properties);
-            }
+            BeanUtils.populate(bean, properties);
         } catch (Exception e) {
             throw new ServletException("BeanUtils.populate", e);
         } finally {
-            if (multipartHandler != null) {
+            if (isMultipart) {
                 // Set the multipart request handler for our ActionForm.
                 // If the bean isn't an ActionForm, an exception would have been
                 // thrown earlier, so it's safe to assume that our bean is
@@ -1243,6 +1259,6 @@ public class RequestUtils {
 
         return contentType != null
             && contentType.startsWith("multipart/form-data")
-            && method.equalsIgnoreCase("POST");
+            && "POST".equalsIgnoreCase(method);
     }
 }
