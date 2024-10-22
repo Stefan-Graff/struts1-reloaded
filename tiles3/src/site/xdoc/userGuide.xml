@@ -45,31 +45,31 @@
     <?xml version="1.0" encoding="UTF-8"?>
 
     <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 1.4//EN"
-       "http://struts.apache.org/dtds/tiles-config_1_4.dtd">
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 
     <tiles-definitions>
 
-    <definition name="mainLayout" path="/common/layouts/classicLayout.jsp">
-        <put name="title"  value="Sample Page Title" />
-        <put name="header" value="/common/header.jsp" />
-        <put name="menu"   value="mainMenu" />
-        <put name="footer" value="/common/footer.jsp" />
-        <put name="body"   value=".portal.body" />
+    <definition name="mainLayout" template="/common/layouts/classicLayout.jsp">
+        <put-attribute name="title"  value="Sample Page Title" />
+        <put-attribute name="header" value="/common/header.jsp" />
+        <put-attribute name="menu"   value="mainMenu" />
+        <put-attribute name="footer" value="/common/footer.jsp" />
+        <put-attribute name="body"   value=".portal.body" />
     </definition>
 
-    <definition name="mainMenu" path="/common/layouts/vboxLayout.jsp" >
-        <putList name="list" >
-            <add value="menu.links" />
-            <add value="menu.taglib.references" />
-            <add value="menu.printer.friendly" />
-            <add value="menu.old.documents" />
+    <definition name="mainMenu" template="/common/layouts/vboxLayout.jsp" >
+        <put-list-attribute name="list" >
+            <add-attribute value="menu.links" />
+            <add-attribute value="menu.taglib.references" />
+            <add-attribute value="menu.printer.friendly" />
+            <add-attribute value="menu.old.documents" />
       </putList>
     </definition>
 
     <definition name="aPage" extends="mainLayout">
-        <put name="title"  value="Another Title" />
-        <put name="body"   value="aPage.body" />
+        <put-attribute name="title"  value="Another Title" />
+        <put-attribute name="body"   value="aPage.body" />
     </definition>
 
     </tiles-definitions>

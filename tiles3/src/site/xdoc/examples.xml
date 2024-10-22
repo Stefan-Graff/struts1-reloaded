@@ -73,7 +73,7 @@
     <strong>file: layout.jsp</strong>
 
     <source><![CDATA[
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 
 <table  border="2"  width="300"  bordercolor="Gray">
   <tr>
@@ -97,7 +97,7 @@
 
     <strong>file: somepage.jsp </strong>
     <source><![CDATA[
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 
 <tiles:insert template="layout.jsp">
   <tiles:put name="title"  value="This is the title." />
@@ -126,7 +126,7 @@
 
     <strong>file: somepage.jsp </strong>
     <source><![CDATA[
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 
 <tiles:definition id="templateDefinition" template="layout.jsp">
   <tiles:put name="title"  value="This is the title." />
@@ -162,7 +162,7 @@
 
     <strong>file: somepage.jsp</strong>
     <source><![CDATA[
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 
 <tiles:insert beanName="templateDefinition" />
     ]]></source>

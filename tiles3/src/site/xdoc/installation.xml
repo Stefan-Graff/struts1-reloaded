@@ -88,7 +88,7 @@
             add a line that declares the Tiles custom tag library.
 
     <source><![CDATA[
-    <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
+    <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
     ]]></source>
         </li>
     </ul>

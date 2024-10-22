@@ -30,7 +30,7 @@ import org.apache.struts.chain.ComposableRequestProcessor;
 import org.apache.struts.config.ControllerConfig;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.config.PlugInConfig;
-import org.apache.struts.tiles2.util.PlugInConfigContextAdapter;
+import org.apache.struts.tiles3.util.PlugInConfigContextAdapter;
 import org.apache.struts.util.RequestUtils;
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.TilesException;

@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package org.apache.struts.tiles2.actions;
+package org.apache.struts.tiles3.actions;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * <code>
  *   &lt;action path="/saveSubscription"
- *           type="org.apache.struts.tiles2.actions.DefinitionDispatcherAction"
+ *           type="org.apache.struts.tiles3.actions.DefinitionDispatcherAction"
  *           parameter="def"/&gt;
  *     &lt;forward name="success"   path="anything" //&gt;
  *     &lt;forward name="error"     path="path.to.error.page" //&gt;

@@ -253,12 +253,12 @@
  *
  * <h3>Definition File Syntax</h3>
  * <p>The definition file syntax can be found in the
- * <a href="http://struts.apache.org/dtds/tiles-config_1_4.dtd">tiles-config_1_4.dtd file</a>.
+ * <a href="http://tiles.apache.org/dtds/tiles-config_3_0.dtd">tiles-config_3_0.dtd file</a>.
  * </p>
  * <p>Following is a simple example:</p>
  *   <pre>&lt;!DOCTYPE tiles-definitions PUBLIC
- *       &quot;-//Apache Software Foundation//DTD Tiles Configuration 1.4//EN&quot;
- *       &quot;http://struts.apache.org/dtds/tiles-config_1_4.dtd&quot;&gt;<br><br>&lt;!-- Definitions for Tiles documentation   --&gt;<br>&lt;tiles-definitions&gt;
+ *       &quot;-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN&quot;
+ *       &quot;http://tiles.apache.org/dtds/tiles-config_3_0.dtd&quot;&gt;<br><br>&lt;!-- Definitions for Tiles documentation   --&gt;<br>&lt;tiles-definitions&gt;
  *
  *  &lt;!-- ========================================================== --&gt;
  *  &lt;!-- Master definition                                          --&gt;
@@ -295,4 +295,4 @@
  *   <li>Enable Tiles logging. See the commons-logging package help.</li>
  * </ul>
  */
-package org.apache.struts.tiles2;
+package org.apache.struts.tiles3;

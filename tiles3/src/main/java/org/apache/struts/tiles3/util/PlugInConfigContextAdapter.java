@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package org.apache.struts.tiles2.util;
+package org.apache.struts.tiles3.util;
 
 import java.util.Collections;
 import java.util.HashMap;

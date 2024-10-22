@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.struts.tiles2.commands;
+package org.apache.struts.tiles3.commands;
 
 import org.apache.commons.chain.Command;
 import org.apache.struts.chain.contexts.ServletActionContext;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * <p>To initialize the {@code TilesDefinitionFactory}, use
  * {@code org.apache.struts.chain.commands.legacy.TilesPlugin}. This class is a
- * simple extension to {@code org.apache.struts.tiles2.TilesPlugin} which
+ * simple extension to {@code org.apache.struts.tiles3.TilesPlugin} which
  * simply does not interfere with your choice of {@code RequestProcessor}
  * implementation.</p>
  */

@@ -19,7 +19,7 @@
 -->
 <project xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd"
-  name="Struts Tiles 2">
+  name="Struts Tiles 3">
     <bannerLeft>
         <name>Apache Software Foundation</name>
         <src>../images/asf-logo.png</src>
@@ -70,8 +70,8 @@
             <item   name="Struts Tiles"
                     href="../struts-tiles/index.html" />
 
-            <item   name="Struts Tiles 2"
-                    href="../struts-tiles2/index.html" />
+            <item   name="Struts Tiles 3"
+                    href="../struts-tiles3/index.html" />
 
         </menu>
 

@@ -29,7 +29,7 @@
 
 <body>
 
-<section name="Welcome To Struts Tiles 2">
+<section name="Welcome To Struts Tiles 3">
     <p>
         Welcome to the Struts Tiles component.Tiles is a templating
         system. (Include on steriods.) It can be used to create a common look
@@ -39,8 +39,8 @@
     </p>
     <p>
         Tiles can also be used without Struts. A new release of Tiles,
-        Tiles 2, is being prepared. If you would like to use Tiles without
-        Struts, see the new <a href="http://tiles.apache.org/">Apache Tiles 2
+        Tiles 3, is being prepared. If you would like to use Tiles without
+        Struts, see the new <a href="http://tiles.apache.org/">Apache Tiles 3
         project.</a> The focus of this site is using Tiles <em>with</em> Struts.
     </p>
 </section>

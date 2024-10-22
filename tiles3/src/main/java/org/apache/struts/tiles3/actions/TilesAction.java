@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package org.apache.struts.tiles2.actions;
+package org.apache.struts.tiles3.actions;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

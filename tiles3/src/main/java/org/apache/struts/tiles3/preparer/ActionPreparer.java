@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package org.apache.struts.tiles2.preparer;
+package org.apache.struts.tiles3.preparer;
 
 import org.apache.struts.action.Action;
 import org.apache.tiles.AttributeContext;
