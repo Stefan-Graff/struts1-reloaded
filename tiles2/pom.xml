@@ -32,48 +32,16 @@
     <artifactId>struts-tiles2</artifactId>
     <packaging>jar</packaging>
     <name>Struts Tiles 2 integration</name>
-    <url>http://struts.apache.org</url>
-
-    <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/struts/struts1/trunk/tiles2/</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/struts/struts1/trunk/tiles2/</developerConnection>
-        <url>http://svn.apache.org/repos/asf/struts/struts1/trunk/tiles2/</url>
-    </scm>
-
-    <distributionManagement>
-        <site>
-            <id>apache-site</id>
-            <url>scp://people.apache.org/www/struts.apache.org/1.x/struts-tiles2</url>
-        </site>
-    </distributionManagement>
 
     <properties>
         <struts.osgi.symbolicName>org.apache.struts.tiles2</struts.osgi.symbolicName>
         <tiles2Version>2.2.2</tiles2Version>
     </properties>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
-
-        <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </testResource>
-        </testResources>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>struts-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -99,6 +67,12 @@
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
             <version>${tiles2Version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.tiles</groupId>

@@ -48,7 +48,7 @@ import org.apache.tiles.definition.util.DefinitionsFactoryUtil;
  * </p>
  * <p>
  * For background discussion see
- * http://issues.apache.org/bugzilla/show_bug.cgi?id=26322
+ * <a href="https://issues.apache.org/jira/browse/STR-1937">STR-1937</a>.
  * </p>
  * @version $Rev$ $Date$
  * @since 1.2.1
