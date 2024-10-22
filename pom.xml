@@ -516,6 +516,7 @@
         <module>scripting</module>
         <module>taglib</module>
         <module>tiles</module>
+        <module>tiles2</module>
         <module>tiles3</module>
     </modules>
 
@@ -808,6 +809,20 @@
                         <phase>process-classes</phase>
                         <goals>
                             <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -1243,6 +1258,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>struts-tiles</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>struts-tiles2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
