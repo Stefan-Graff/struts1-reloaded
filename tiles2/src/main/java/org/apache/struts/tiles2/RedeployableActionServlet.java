@@ -26,13 +26,18 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.RequestProcessor;
 import org.apache.struts.config.ModuleConfig;
+import org.apache.tiles.definition.DefinitionsFactoryException;
+import org.apache.tiles.definition.util.DefinitionsFactoryUtil;
+
 
 /**
+ * <p>
  * WebLogic (at least v6 and v7) attempts to serialize the TilesRequestProcessor
  * when re-deploying the Webapp in development mode. The TilesRequestProcessor
  * is not serializable, and loses the Tiles definitions. This results in
  * NullPointerException and/or NotSerializableException when using the app after
  * automatic redeploy.
+ * </p>
  * <p>
  * This bug report proposes a workaround for this problem, in the hope it will
  * help others and maybe motivate an actual fix.
@@ -45,36 +50,42 @@ import org.apache.struts.config.ModuleConfig;
  * For background discussion see
  * <a href="https://issues.apache.org/jira/browse/STR-1937">STR-1937</a>.
  * </p>
- *
+ * @version $Rev$ $Date$
  * @since 1.2.1
  */
 public class RedeployableActionServlet extends ActionServlet {
-    private static final long serialVersionUID = -3681534284719373420L;
 
     /**
      * The request processor for Tiles definitions.
      */
     private TilesRequestProcessor tileProcessor;
 
-    protected synchronized RequestProcessor getRequestProcessor(
-            final ModuleConfig config) throws ServletException {
+    /** {@inheritDoc} */
+    protected synchronized RequestProcessor
+            getRequestProcessor(ModuleConfig config) throws ServletException {
 
         if (tileProcessor != null) {
-            final TilesRequestProcessor processor =
-                    (TilesRequestProcessor) super.getRequestProcessor(config);
+            TilesRequestProcessor processor = (TilesRequestProcessor) super.getRequestProcessor(config);
             return processor;
         }
 
         // reset the request processor
-        final String requestProcessorKey = Globals.REQUEST_PROCESSOR_KEY
+        String requestProcessorKey = Globals.REQUEST_PROCESSOR_KEY
                 + config.getPrefix();
         getServletContext().removeAttribute(requestProcessorKey);
 
         // create a new request processor instance
-        final TilesRequestProcessor processor =
-                (TilesRequestProcessor) super.getRequestProcessor(config);
+        TilesRequestProcessor processor = (TilesRequestProcessor) super.getRequestProcessor(config);
 
         tileProcessor = processor;
+
+        try {
+            // reload Tiles defs
+            DefinitionsFactoryUtil.reloadDefinitionsFactory(
+                    getServletContext());
+        } catch (DefinitionsFactoryException e) {
+            e.printStackTrace();
+        }
 
         return processor;
     }

@@ -33,10 +33,6 @@ import org.apache.struts.config.ModuleConfig;
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.TilesException;
 import org.apache.tiles.access.TilesAccess;
-import org.apache.tiles.request.ApplicationContext;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
-import org.apache.tiles.request.servlet.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +56,6 @@ import org.slf4j.LoggerFactory;
  * @since Struts 1.1
  */
 public class TilesRequestProcessor extends RequestProcessor {
-    private static final long serialVersionUID = 6212184689866961850L;
 
     /**
      * The {@code Log} instance for this class.
@@ -89,8 +84,8 @@ public class TilesRequestProcessor extends RequestProcessor {
      * otherwise.
      *
      * @param definitionName Definition name to insert.
-     * @param req            Current page request.
-     * @param res            Current page response.
+     * @param request        Current page request.
+     * @param response       Current page response.
      *
      * @return {@code true} if the method has processed uri as a definition
      *         name, [@code false} otherwise.
@@ -102,15 +97,12 @@ public class TilesRequestProcessor extends RequestProcessor {
      */
     protected boolean processTilesDefinition(
         String definitionName,
-        HttpServletRequest req,
-        HttpServletResponse res)
+        HttpServletRequest request,
+        HttpServletResponse response)
         throws IOException, ServletException {
 
-        ApplicationContext applicationContext = ServletUtil
-                .getApplicationContext(getServletContext());
-        Request request = new ServletRequest(applicationContext,
-                req, res);
-        TilesContainer container = TilesAccess.getContainer(applicationContext);
+        TilesContainer container = TilesAccess.getContainer(servlet
+                .getServletContext());
         if (container == null) {
             log.debug("Tiles container not found, so pass to next command.");
             return false;
@@ -118,10 +110,12 @@ public class TilesRequestProcessor extends RequestProcessor {
 
         boolean retValue = false;
 
-        if (container.isValidDefinition(definitionName, request)) {
+        if (container.isValidDefinition(definitionName, new Object[] { request,
+                response })) {
             retValue = true;
             try {
-                container.render(definitionName, request);
+                container.render(definitionName, new Object[] { request,
+                        response });
             } catch (TilesException e) {
                 throw new ServletException("Cannot render definition '"
                         + definitionName + "'");

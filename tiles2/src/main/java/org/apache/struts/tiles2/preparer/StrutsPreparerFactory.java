@@ -23,9 +23,9 @@ package org.apache.struts.tiles2.preparer;
 
 import org.apache.struts.action.Action;
 import org.apache.tiles.TilesException;
+import org.apache.tiles.preparer.BasicPreparerFactory;
 import org.apache.tiles.preparer.ViewPreparer;
-import org.apache.tiles.preparer.factory.BasicPreparerFactory;
-import org.apache.tiles.request.reflect.ClassUtil;
+import org.apache.tiles.util.ClassUtil;
 
 /**
  * Factory used to instantiate preparers in a Struts 1 / Tiles 2 environment.

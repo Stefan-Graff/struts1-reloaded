@@ -21,7 +21,11 @@
 
 package org.apache.struts.tiles2;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -30,12 +34,23 @@ import org.apache.struts.chain.ComposableRequestProcessor;
 import org.apache.struts.config.ControllerConfig;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.config.PlugInConfig;
+import org.apache.struts.tiles2.preparer.StrutsPreparerFactory;
 import org.apache.struts.tiles2.util.PlugInConfigContextAdapter;
+import org.apache.struts.util.ModuleUtils;
 import org.apache.struts.util.RequestUtils;
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.TilesException;
 import org.apache.tiles.access.TilesAccess;
+import org.apache.tiles.context.ChainedTilesContextFactory;
+import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.definition.DefinitionsFactory;
+import org.apache.tiles.definition.UrlDefinitionsFactory;
+import org.apache.tiles.factory.KeyedDefinitionsFactoryTilesContainerFactory;
+import org.apache.tiles.factory.TilesContainerFactory;
+import org.apache.tiles.impl.BasicTilesContainer;
+import org.apache.tiles.impl.KeyedDefinitionsFactoryTilesContainer;
+import org.apache.tiles.impl.KeyedDefinitionsFactoryTilesContainer.KeyExtractor;
+import org.apache.tiles.servlet.context.ServletTilesRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -73,6 +88,41 @@ public class TilesPlugin implements PlugIn {
      * Marker for logging of fatal errors.
      */
     private final static Marker FATAL = MarkerFactory.getMarker("FATAL");
+    
+    /**
+     * Defaults form Tiles 2 configuration in case of a module-aware
+     * configuration.
+     */
+    private static final Map MODULE_AWARE_DEFAULTS =
+        new HashMap();
+
+    /**
+     * Defaults form Tiles 2 configuration in case of a configuration without
+     * modules.
+     */
+    private static final Map NO_MODULE_DEFAULTS =
+        new HashMap();
+
+    static {
+        NO_MODULE_DEFAULTS.put(TilesContainerFactory
+                .CONTEXT_FACTORY_INIT_PARAM,
+                ChainedTilesContextFactory.class.getName());
+        NO_MODULE_DEFAULTS.put(TilesContainerFactory
+                .DEFINITIONS_FACTORY_INIT_PARAM,
+                UrlDefinitionsFactory.class.getName());
+        NO_MODULE_DEFAULTS.put(TilesContainerFactory
+                .PREPARER_FACTORY_INIT_PARAM,
+                StrutsPreparerFactory.class.getName());
+
+        MODULE_AWARE_DEFAULTS.putAll(NO_MODULE_DEFAULTS);
+        MODULE_AWARE_DEFAULTS.put(
+                KeyedDefinitionsFactoryTilesContainerFactory
+                .KEY_EXTRACTOR_CLASS_INIT_PARAM,
+                ModuleKeyExtractor.class.getName());
+        MODULE_AWARE_DEFAULTS.put(TilesContainerFactory
+                .CONTAINER_FACTORY_INIT_PARAM,
+                KeyedDefinitionsFactoryTilesContainerFactory.class.getName());
+    }
 
     /**
      * The {@code Log} instance for this class.
@@ -144,8 +194,8 @@ public class TilesPlugin implements PlugIn {
             TilesContainer container;
             if (moduleAware) {
                 factory = new TilesPluginContainerFactory();
-                container = TilesAccess
-                        .getContainer(currentPlugInConfigContextAdapter);
+                container = TilesAccess.getContainer(
+                        currentPlugInConfigContextAdapter);
                 if (container == null) {
                     container = factory.createContainer(
                             currentPlugInConfigContextAdapter);
@@ -164,7 +214,6 @@ public class TilesPlugin implements PlugIn {
                                         + moduleConfig.getPrefix()
                                         + "' has already been configured");
                     }
-
                     DefinitionsFactory defsFactory = factory
                             .createDefinitionsFactory(pluginContainer, currentPlugInConfigContextAdapter);
                     pluginContainer.setDefinitionsFactory(moduleConfig.getPrefix(), defsFactory);
@@ -264,5 +313,36 @@ public class TilesPlugin implements PlugIn {
      */
     public void setCurrentPlugInConfigObject(PlugInConfig plugInConfigObject) {
         this.currentPlugInConfigObject = plugInConfigObject;
+    }
+
+    /**
+     * Extracts the definitions factory key according to the module prefix.
+     */
+    public static class ModuleKeyExtractor implements KeyExtractor {
+
+        /** {@inheritDoc} */
+        public String getDefinitionsFactoryKey(TilesRequestContext request) {
+            String retValue = null;
+
+            if (request instanceof ServletTilesRequestContext) {
+                HttpServletRequest servletRequest =
+                    (HttpServletRequest) ((ServletTilesRequestContext) request).getRequest();
+                ModuleConfig config = ModuleUtils.getInstance().getModuleConfig(
+                        servletRequest);
+
+                if (config == null) {
+                    // ModuleConfig not found in current request. Select it.
+                    ModuleUtils.getInstance().selectModule(servletRequest,
+                            servletRequest.getSession().getServletContext());
+                    config = ModuleUtils.getInstance().getModuleConfig(servletRequest);
+                }
+
+                if (config != null) {
+                    retValue = config.getPrefix();
+                }
+            }
+            return retValue;
+        }
+
     }
 }

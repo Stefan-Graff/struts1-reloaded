@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <!--
     $Id$
 
@@ -8,9 +8,9 @@
     The ASF licenses this file to You under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
-
+   
          http://www.apache.org/licenses/LICENSE-2.0
-
+   
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,57 +20,54 @@
 <!--
 // ======================================================================== 78
 -->
-<document xmlns="http://maven.apache.org/XDOC/2.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 https://maven.apache.org/xsd/xdoc-2.0.xsd">
+<document>
 <properties>
   <title>Welcome</title>
 </properties>
 
 <body>
 
-<section name="Welcome To Struts Tiles 2">
+<section name="Welcome To Struts Tiles">
     <p>
-        Welcome to the Struts Tiles component.Tiles is a templating
-        system. (Include on steriods.) It can be used to create a common look
-        and feel for a web application. Tiles can also be used to create
-        reusable view components. This site will help
-        you get started with Tiles.
+        Welcome to the Struts Tiles component.Tiles is a templating 
+        system. (Include on steriods.) It can be used to create a common look 
+        and feel for a web application. Tiles can also be used to create 
+        reusable view components. This site will help 
+        you get started with Tiles. 
     </p>
     <p>
-        Tiles can also be used without Struts. A new release of Tiles,
-        Tiles 2, is being prepared. If you would like to use Tiles without
-        Struts, see the new <a href="http://tiles.apache.org/">Apache Tiles 2
-        project.</a> The focus of this site is using Tiles <em>with</em> Struts.
+        Tiles can also be used without Struts. A new release of Tiles, 
+        Tiles 2, is being prepared. If you would like to use Tiles without 
+        Struts, see the new <a href="">Tiles 2 subproject.</a> 
+        The focus of this site is using Tiles <em>with</em> Struts. 
     </p>
 </section>
 
-<section name="Tiles Features" id="Features">
+<section name="Tiles Features" href="Features">
      <ul>
-          <li>
-             Screen definitions
+          <li>Screen definitions
              <ul>
                 <li>Create a screen by assembling
-                   <strong><em>Tiles</em></strong>: header, footer,
+                   <strong><em>Tiles</em></strong> : header, footer,
                    menu, body, etc.
                 </li>
                 <li>
-                   Definitions can take place:
+                   Definitions can take place : 
                    <ul>
                       <li>in a centralized XML file</li>
                       <li>directly in JSP pages</li>
-                      <li>programmatically in Actions</li>
+                      <li>programatically in Actions</li>
                    </ul>
                 </li>
                 <li>
                    Definitions provide an inheritance
-                   mechanism: a definition can extend another one,
+                   mechanism : a definition can extend another one,
                    and override parameters.
                 </li>
              </ul>
           </li>
           <li>
-             Layouts
+             Layouts 
              <ul>
                 <li>
                    Define common page layouts and reuse
@@ -92,7 +89,7 @@
              </ul>
           </li>
           <li>
-             Dynamic page building
+             Dynamic page building 
              <ul>
                 <li>
                    Tiles can be gathered dynamically during
@@ -104,7 +101,7 @@
           </li>
           <li>
              Reuse of <strong><em>Tiles</em></strong> /
-             Components
+             Components 
              <ul>
                 <li>
                    If well defined, a
@@ -127,40 +124,40 @@
           </li>
           <li>
              Internationalization (i18n)
-             <ul>
-                <li>
-                   It is possible to load different tiles
-                   according to Locale.
-                </li>
-                <li>
-                   A mechanism similar to Java properties
-                   files is used for definitions files: you can have one
-                   definition file per Locale. The appropriate definition is
-                   loaded according to the current Locale.
-                </li>
-             </ul>
+          </li>
+          <ul>
+          <li>
+             It is possible to load different tiles
+             according to Locale.
           </li>
           <li>
-             Multi-channels
-             <ul>
-                <li>
-                   It is possible to load different Tiles
-                   according to a key.
-                </li>
-
-                <li>
-                   For example, the key could represent user privileges,
-                   browser type, arbitrary name stored in session, etc.
-                </li>
-
-                <li>
-                   A mechanism similar to Java properties
-                   files is used for definitions files: you can have one
-                   definition file per key. The appropriate definition is
-                   loaded according to the key.
-                </li>
-             </ul>
+             A mechanism similar to Java properties
+             files is used for definitions files: you can have one
+             definition file per Locale. The appropriate definition is
+             loaded according to the current Locale.
           </li>
+          </ul>
+          <li>
+             Multi-channels
+          </li>
+          <ul>
+          <li>
+             It is possible to load different Tiles
+             according to a key.
+          </li>
+          
+          <li>
+             For example, the key could represent user privileges,
+             browser type, arbitrary name stored in session, etc.
+          </li>
+          
+          <li>
+             A mechanism similar to Java properties
+             files is used for definitions files: you can have one
+             definition file per key. The appropriate definition is
+             loaded according to the key.
+          </li>
+          </ul>
        </ul>
 
 </section>

@@ -30,10 +30,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.access.TilesAccess;
-import org.apache.tiles.request.ApplicationContext;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
-import org.apache.tiles.request.servlet.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +63,6 @@ import org.slf4j.LoggerFactory;
  * @version $Rev$ $Date$
  */
 public class DefinitionDispatcherAction extends Action {
-    private static final long serialVersionUID = 9052008321390723214L;
 
     /**
      * The {@code Log} instance for this class.
@@ -82,8 +77,8 @@ public class DefinitionDispatcherAction extends Action {
      *
      * @param mapping The ActionMapping used to select this instance
      * @param form The optional ActionForm bean for this request (if any)
-     * @param req The HTTP request we are processing
-     * @param res The HTTP response we are creating
+     * @param request The HTTP request we are processing
+     * @param response The HTTP response we are creating
      *
      * @throws Exception if the application business logic throws
      *  an exception
@@ -93,8 +88,8 @@ public class DefinitionDispatcherAction extends Action {
     public ActionForward execute(
         ActionMapping mapping,
         ActionForm form,
-        HttpServletRequest req,
-        HttpServletResponse res)
+        HttpServletRequest request,
+        HttpServletResponse response)
         throws Exception {
 
         // Identify the request parameter containing the method name
@@ -105,7 +100,7 @@ public class DefinitionDispatcherAction extends Action {
         }
 
         // Identify the method name to be dispatched to
-        String name = req.getParameter(parameter);
+        String name = request.getParameter(parameter);
         if (name == null) {
             log.error("Can't get parameter '{}'.", parameter);
 
@@ -114,14 +109,12 @@ public class DefinitionDispatcherAction extends Action {
 
         // Try to dispatch to requested definition
         // Read definition from factory, but we can create it here.
-        ApplicationContext applicationContext = ServletUtil
-                .getApplicationContext(req.getSession().getServletContext());
-        Request request = new ServletRequest(applicationContext,
-                req, res);
-        TilesContainer container = TilesAccess.getContainer(applicationContext);
+        TilesContainer container = TilesAccess.getContainer(request
+                .getSession().getServletContext());
         if (container != null
-                && container.isValidDefinition(name, request)) {
-            container.render(name, request);
+                && container.isValidDefinition(name, new Object[] { request,
+                        response })) {
+            container.render(name, new Object[] { request, response });
         } else {
             log.error("Can't get definition '{}'.", name);
             return mapping.findForward("error");

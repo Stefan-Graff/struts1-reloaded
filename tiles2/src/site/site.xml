@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
     $Id$
 
@@ -8,32 +8,31 @@
     The ASF licenses this file to You under the Apache License, Version 2.0
     (the "License"); you may not use this file except in compliance with
     the License.  You may obtain a copy of the License at
-
+   
          http://www.apache.org/licenses/LICENSE-2.0
-
+   
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd"
-  name="Struts Tiles 2">
+<project name="Struts Tiles">
     <bannerLeft>
         <name>Apache Software Foundation</name>
-        <src>../images/asf-logo.png</src>
-        <href>https://www.apache.org/</href>
+        <src>http://www.apache.org/images/asf-logo.gif</src>
+        <href>http://www.apache.org/</href>
     </bannerLeft>
     <bannerRight>
         <name>Apache Struts</name>
-        <src>../images/struts.png</src>
-        <href>https://struts.apache.org/index.html</href>
-    </bannerRight>
+        <src>http://struts.apache.org/images/struts.gif</src>
+        <href>http://struts.apache.org/</href>
+    </bannerRight>     
     <body>
         <links>
-            <item name="Apache" href="https://www.apache.org/" />
-            <item name="Struts" href="https://struts.apache.org/index.html" />
+            <item name="Apache" href="http://www.apache.org/" /> 
+            <item name="Struts 1" href="http://struts.apache.org/1.x/" />
+            <item name="Struts 2" href="http://struts.apache.org/2.x/" />
         </links>
         <menu name="Struts Tiles">
             <item href="index.html" name="Welcome"/>
@@ -41,16 +40,13 @@
             <item href="installation.html" name="Installation"/>
             <item href="userGuide.html" name="User Guide"/>
             <item href="examples.html" name="Creating Templates"/>
-            <item href="tagreference.html" name="Taglib Reference"/>
+            <item href="tagreference.html" name="Taglib Reference"/>    
         </menu>
-
+        
         <menu name="Components">
-
+        
             <item   name="Struts Apps"
                     href="../struts-apps/index.html" />
-
-            <item   name="Struts Core"
-                    href="../struts-core/index.html" />
 
             <item   name="Struts EL"
                     href="../struts-el/index.html" />
@@ -70,11 +66,8 @@
             <item   name="Struts Tiles"
                     href="../struts-tiles/index.html" />
 
-            <item   name="Struts Tiles 2"
-                    href="../struts-tiles2/index.html" />
-
         </menu>
-
+ 
         <menu name="Quick Links">
             <item
                     name="Javadoc"
@@ -83,6 +76,6 @@
                     name="Struts 1"
                     href="../index.html"/>
         </menu>
-        <menu ref="reports"/>
+        ${reports}
     </body>
 </project>

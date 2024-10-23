@@ -30,12 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.tiles.AttributeContext;
-import org.apache.tiles.TilesContainer;
 import org.apache.tiles.access.TilesAccess;
-import org.apache.tiles.request.ApplicationContext;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
-import org.apache.tiles.request.servlet.ServletUtil;
 
 /**
  * Base class for Tiles Actions.
@@ -48,7 +43,6 @@ import org.apache.tiles.request.servlet.ServletUtil;
  * @version $Rev$ $Date$
  */
 public abstract class TilesAction extends Action {
-    private static final long serialVersionUID = -565671066052461589L;
 
     /**
      * Original Struts Action's method.
@@ -57,8 +51,8 @@ public abstract class TilesAction extends Action {
      *
      * @param mapping The ActionMapping used to select this instance.
      * @param form The optional ActionForm bean for this request (if any).
-     * @param req The HTTP request we are processing.
-     * @param res The HTTP response we are creating.
+     * @param request The HTTP request we are processing.
+     * @param response The HTTP response we are creating.
      *
      * @throws Exception if the application business logic throws
      *  an exception
@@ -68,17 +62,14 @@ public abstract class TilesAction extends Action {
     public ActionForward execute(
         ActionMapping mapping,
         ActionForm form,
-        HttpServletRequest req,
-        HttpServletResponse res)
+        HttpServletRequest request,
+        HttpServletResponse response)
         throws Exception {
 
         // Try to retrieve tile context
-        ApplicationContext applicationContext = ServletUtil
-                .getApplicationContext(req.getSession().getServletContext());
-        Request request = new ServletRequest(applicationContext,
-                req, res);
-        TilesContainer container = TilesAccess.getContainer(applicationContext);
-        AttributeContext context = container.getAttributeContext(request);
+        AttributeContext context = TilesAccess.getContainer(
+                request.getSession().getServletContext()).getAttributeContext(
+                new Object[] { request, response });
         if (context == null) {
             throw new ServletException(
                 "Can't find Tile context for '"
@@ -86,7 +77,7 @@ public abstract class TilesAction extends Action {
                     + "'. TilesAction subclasses must be called from a Tile");
         }
 
-        return this.execute(context, mapping, form, req, res);
+        return this.execute(context, mapping, form, request, response);
     }
 
     /**
@@ -117,4 +108,5 @@ public abstract class TilesAction extends Action {
 
         return null;
     }
+
 }

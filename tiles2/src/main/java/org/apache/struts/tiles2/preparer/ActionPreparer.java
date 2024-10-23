@@ -23,16 +23,16 @@ package org.apache.struts.tiles2.preparer;
 
 import org.apache.struts.action.Action;
 import org.apache.tiles.AttributeContext;
+import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.PreparerException;
-import org.apache.tiles.preparer.ViewPreparer;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
+import org.apache.tiles.preparer.ViewPreparerSupport;
+import org.apache.tiles.servlet.context.ServletTilesRequestContext;
 
 /**
  * Struts wrapper implementation of Controller.  This implementation wraps an
  * <code>Action</code> in a <code>Controller</code>.
  */
-public class ActionPreparer implements ViewPreparer {
+public class ActionPreparer extends ViewPreparerSupport {
 
     /**
      * Struts action wrapped.
@@ -49,11 +49,11 @@ public class ActionPreparer implements ViewPreparer {
     }
 
     /** {@inheritDoc} */
-    public void execute(Request tilesContext,
+    public void execute(TilesRequestContext tilesContext,
             AttributeContext attributeContext) throws PreparerException {
-        if (tilesContext instanceof ServletRequest) {
-            ServletRequest servletTilesContext =
-                    (ServletRequest) tilesContext;
+        if (tilesContext instanceof ServletTilesRequestContext) {
+            ServletTilesRequestContext servletTilesContext =
+                    (ServletTilesRequestContext) tilesContext;
             try {
                 this.action.execute(null, null, servletTilesContext.getRequest(),
                         servletTilesContext.getResponse());

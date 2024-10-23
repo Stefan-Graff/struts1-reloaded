@@ -29,10 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tiles.AttributeContext;
+import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.preparer.PreparerException;
 import org.apache.tiles.preparer.ViewPreparer;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
+import org.apache.tiles.servlet.context.ServletTilesRequestContext;
 
 /**
  * @version $Rev$ $Date$
@@ -46,7 +46,7 @@ public class UrlPreparer implements ViewPreparer {
 
     /**
      * Constructor.
-     *
+     * 
      * @param url The URL to be used as a preparer.
      */
     public UrlPreparer(String url) {
@@ -54,12 +54,12 @@ public class UrlPreparer implements ViewPreparer {
     }
 
     /** {@inheritDoc} */
-    public void execute(Request tilesContext,
+    public void execute(TilesRequestContext tilesContext,
             AttributeContext attributeContext) throws PreparerException {
 
-        if (tilesContext instanceof ServletRequest) {
-            ServletRequest servletTilesContext =
-                (ServletRequest) tilesContext;
+        if (tilesContext instanceof ServletTilesRequestContext) {
+            ServletTilesRequestContext servletTilesContext =
+                (ServletTilesRequestContext) tilesContext;
             HttpServletRequest request = servletTilesContext.getRequest();
             HttpServletResponse response = servletTilesContext.getResponse();
             RequestDispatcher rd = request.getSession().getServletContext()

@@ -43,10 +43,6 @@ import org.apache.struts.util.RequestUtils;
 import org.apache.tiles.TilesContainer;
 import org.apache.tiles.access.TilesAccess;
 import org.apache.tiles.definition.DefinitionsFactory;
-import org.apache.tiles.request.ApplicationAccess;
-import org.apache.tiles.request.ApplicationContext;
-import org.apache.tiles.request.servlet.ServletApplicationContext;
-import org.apache.tiles.request.servlet.ServletUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,10 +85,6 @@ public class TestTilesPlugin extends TestMockBase {
 
         super.setUp();
         actionServlet = new MockActionServlet(context, config);
-
-        ApplicationContext applicationContext = new ServletApplicationContext(
-                actionServlet.getServletContext());
-        ApplicationAccess.register(applicationContext);
     }
 
     /** {@inheritDoc} */
@@ -136,9 +128,8 @@ public class TestTilesPlugin extends TestMockBase {
         request.setPathElements("/myapp", "/module1/foo.do", null, null);
 
         // Retrieve TilesContainer
-        ApplicationContext applicationContext = ServletUtil
-                .getApplicationContext(actionServlet.getServletContext());
-        TilesContainer container = TilesAccess.getContainer(applicationContext);
+        TilesContainer container = TilesAccess.getContainer(actionServlet
+                .getServletContext());
         assertSame(TilesPluginContainer.class.getName(),
                 container.getClass().getName());
 
@@ -219,9 +210,8 @@ public class TestTilesPlugin extends TestMockBase {
         request.setAttribute(Globals.MODULE_KEY, module1);
         request.setPathElements("/myapp", "/module1/foo.do", null, null);
         // Retrieve TilesContainer
-        ApplicationContext applicationContext = ServletUtil
-                .getApplicationContext(actionServlet.getServletContext());
-        TilesContainer container = TilesAccess.getContainer(applicationContext);
+        TilesContainer container = TilesAccess.getContainer(actionServlet
+                .getServletContext());
         assertSame(TilesPluginContainer.class.getName(), container.getClass()
                 .getName());
 

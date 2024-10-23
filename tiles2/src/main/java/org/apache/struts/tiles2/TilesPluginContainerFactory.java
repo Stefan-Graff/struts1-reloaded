@@ -21,41 +21,45 @@
 
 package org.apache.struts.tiles2;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tiles.TilesApplicationContext;
 import org.apache.tiles.TilesContainer;
+import org.apache.tiles.context.TilesRequestContextFactory;
 import org.apache.tiles.definition.DefinitionsFactory;
 import org.apache.tiles.definition.UnresolvingLocaleDefinitionsFactory;
 import org.apache.tiles.evaluator.AttributeEvaluatorFactory;
 import org.apache.tiles.factory.BasicTilesContainerFactory;
+import org.apache.tiles.factory.TilesContainerFactoryException;
 import org.apache.tiles.locale.LocaleResolver;
-import org.apache.tiles.request.ApplicationContext;
-import org.apache.tiles.request.ApplicationResource;
 
 public class TilesPluginContainerFactory extends BasicTilesContainerFactory {
 
     @Override
-    public TilesContainer createContainer(ApplicationContext applicationContext) {
+    public TilesContainer createContainer(TilesApplicationContext applicationContext) {
         TilesPluginContainer container = instantiateContainer(applicationContext);
+        TilesRequestContextFactory requestContextFactory =
+                createRequestContextFactory(applicationContext);
         container.setApplicationContext(applicationContext);
-        LocaleResolver resolver = createLocaleResolver(applicationContext);
+        LocaleResolver resolver = createLocaleResolver(applicationContext, requestContextFactory);
         container.setLocaleResolver(resolver);
-        container.setDefinitionsFactory(createDefinitionsFactory(applicationContext,
+        container.setDefinitionsFactory(createDefinitionsFactory(applicationContext, requestContextFactory,
                 resolver));
         AttributeEvaluatorFactory attributeEvaluatorFactory = createAttributeEvaluatorFactory(
-                applicationContext, resolver);
+                applicationContext, requestContextFactory, resolver);
         container.setAttributeEvaluatorFactory(attributeEvaluatorFactory);
-        container.setPreparerFactory(createPreparerFactory(applicationContext));
-        TilesContainer injectedContainer = createDecoratedContainer(container, applicationContext);
-        container.setRendererFactory(createRendererFactory(applicationContext,
-                injectedContainer, attributeEvaluatorFactory));
-        return injectedContainer;
+        container.setPreparerFactory(createPreparerFactory(applicationContext, requestContextFactory));
+        container.setRendererFactory(createRendererFactory(applicationContext, requestContextFactory,
+                container, attributeEvaluatorFactory));
+        return container;
     }
 
     @Override
     protected TilesPluginContainer instantiateContainer(
-            ApplicationContext context) {
+            TilesApplicationContext context) {
         return new TilesPluginContainer();
     }
 
@@ -64,11 +68,12 @@ public class TilesPluginContainerFactory extends BasicTilesContainerFactory {
      * list containing the URL point to "definitions-config".
      *
      * @param applicationContext The Tiles application context.
-     *
+     * @param contextFactory The Tiles-Request-Context-Factory
      * @return The source URLs.
      * @since Struts 1.4.1
      */
-    protected List<ApplicationResource> getSources(ApplicationContext applicationContext) {
+    protected List<URL> getSourceURLs(TilesApplicationContext applicationContext,
+                                      TilesRequestContextFactory contextFactory) {
         String param = applicationContext
                 .getInitParams().get(DefinitionsFactory.DEFINITIONS_CONFIG);
         if (param == null) {
@@ -79,8 +84,13 @@ public class TilesPluginContainerFactory extends BasicTilesContainerFactory {
             param = "/WEB-INF/tiles.xml";
         }
 
-        return Collections
-                .singletonList(applicationContext.getResource(param));
+        try {
+            return Collections
+                    .singletonList(applicationContext.getResource(param));
+        } catch (IOException e) {
+            throw new TilesContainerFactoryException(
+                    "Cannot get URL: " + param, e);
+        }
     }
 
     /**
@@ -94,8 +104,11 @@ public class TilesPluginContainerFactory extends BasicTilesContainerFactory {
      * @since Struts 1.4.1
      */
     public DefinitionsFactory createDefinitionsFactory(TilesPluginContainer container,
-            ApplicationContext applicationContext) {
+                                                       TilesApplicationContext applicationContext) {
+        TilesRequestContextFactory requestContextFactory =
+                createRequestContextFactory(applicationContext);
         LocaleResolver resolver = container.getLocaleResolverIntern();
-        return createDefinitionsFactory(applicationContext, resolver);
+        return createDefinitionsFactory(applicationContext, requestContextFactory, resolver);
     }
+
 }

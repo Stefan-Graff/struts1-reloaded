@@ -382,8 +382,6 @@
         <groovyVersion>4.0.15</groovyVersion>
         <seleniumVersion>4.15.0</seleniumVersion>
         <slf4jVersion>2.0.9</slf4jVersion>
-        <tilesVersion>3.0.8</tilesVersion>
-        <tilesRequestVersion>1.0.7</tilesRequestVersion>
         <antlrVersion>4.13.1</antlrVersion>
         <servletVersion>4.0.4</servletVersion>
         <jspVersion>2.3.6</jspVersion>
@@ -519,6 +517,7 @@
         <module>taglib</module>
         <module>tiles</module>
         <module>tiles2</module>
+        <module>tiles3</module>
     </modules>
 
     <licenses>
@@ -810,6 +809,20 @@
                         <phase>process-classes</phase>
                         <goals>
                             <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -1157,32 +1170,6 @@
                 <version>${groovyVersion}</version>
             </dependency>
             <dependency>
-               <groupId>org.apache.tiles</groupId>
-               <artifactId>tiles-api</artifactId>
-               <version>${tilesVersion}</version>
-            </dependency>
-            <dependency>
-               <groupId>org.apache.tiles</groupId>
-               <artifactId>tiles-core</artifactId>
-               <version>${tilesVersion}</version>
-               <exclusions>
-                  <exclusion>
-                     <groupId>org.slf4j</groupId>
-                     <artifactId>jcl-over-slf4j</artifactId>
-                  </exclusion>
-               </exclusions>
-            </dependency>
-            <dependency>
-               <groupId>org.apache.tiles</groupId>
-               <artifactId>tiles-request-api</artifactId>
-               <version>${tilesRequestVersion}</version>
-            </dependency>
-            <dependency>
-               <groupId>org.apache.tiles</groupId>
-               <artifactId>tiles-request-servlet</artifactId>
-               <version>${tilesRequestVersion}</version>
-            </dependency>
-            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>struts-blank</artifactId>
                 <version>${project.version}</version>
@@ -1276,6 +1263,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>struts-tiles2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>struts-tiles3</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

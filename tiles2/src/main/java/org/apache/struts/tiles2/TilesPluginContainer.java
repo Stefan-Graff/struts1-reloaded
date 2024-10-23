@@ -28,12 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.util.ModuleUtils;
+import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.Definition;
 import org.apache.tiles.definition.DefinitionsFactory;
 import org.apache.tiles.impl.BasicTilesContainer;
 import org.apache.tiles.locale.LocaleResolver;
-import org.apache.tiles.request.Request;
-import org.apache.tiles.request.servlet.ServletRequest;
+import org.apache.tiles.servlet.context.ServletTilesRequestContext;
 
 public class TilesPluginContainer extends BasicTilesContainer {
 
@@ -107,7 +107,7 @@ public class TilesPluginContainer extends BasicTilesContainer {
 
     @Override
     public Definition getDefinition(String definitionName,
-            Request request) {
+    TilesRequestContext request) {
         Definition retValue = null;
         String key = getDefinitionsFactoryKey(request);
         if (key != null) {
@@ -130,12 +130,12 @@ public class TilesPluginContainer extends BasicTilesContainer {
      * @param request The request object.
      * @return The needed factory key.
      */
-    protected String getDefinitionsFactoryKey(Request request) {
+    protected String getDefinitionsFactoryKey(TilesRequestContext request) {
         String retValue = null;
 
-        if (request instanceof ServletRequest) {
+        if (request instanceof ServletTilesRequestContext) {
             HttpServletRequest servletRequest =
-                    ((ServletRequest) request).getRequest();
+                (HttpServletRequest) ((ServletTilesRequestContext) request).getRequest();
             ModuleConfig config = ModuleUtils.getInstance().getModuleConfig(
                     servletRequest);
 
@@ -152,4 +152,5 @@ public class TilesPluginContainer extends BasicTilesContainer {
         }
         return retValue;
     }
+
 }

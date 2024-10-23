@@ -19,10 +19,12 @@
  * under the License.
  */
 
+
 package org.apache.struts.tiles2.actions;
 
 import java.io.PrintWriter;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,43 +32,57 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.tiles.definition.DefinitionsFactoryException;
+import org.apache.tiles.definition.util.DefinitionsFactoryUtil;
 
 /**
- * This standard <strong>Action</strong> is for compatibility with
- * {@code struts-tiles}. The configuration is now reloaded automatically.
+ * <p>A standard <strong>Action</strong> that calls the
+ * <code>reload()</code> method of our controller servlet to
+ * reload its configuration information from the configuration
+ * files (which have presumably been updated) dynamically.</p>
+ *
+ * @version $Rev$ $Date$
  */
+
 public class ReloadDefinitionsAction extends Action {
-    private static final long serialVersionUID = -7402180335252956248L;
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP
-     * response (or forward to another web component that will create it), with
-     * provision for handling exceptions thrown by the business logic.
+     * response (or forward to another web component that will create it),
+     * with provision for handling exceptions thrown by the business logic.
      *
-     * @param mapping  The ActionMapping used to select this instance
-     * @param form     The optional ActionForm bean for this request (if any)
-     * @param request  The HTTP request we are processing
+     * @param mapping The ActionMapping used to select this instance
+     * @param form The optional ActionForm bean for this request (if any)
+     * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      *
+     * @throws Exception if the application business logic throws
+     *  an exception
      * @return The forward object.
-     *
-     * @throws Exception if the application business logic throws an exception
-     *
      * @since Struts 1.1
      */
-    public ActionForward execute(final ActionMapping mapping,
-            final ActionForm form, final HttpServletRequest request,
-            final HttpServletResponse response) throws Exception {
-
+    public ActionForward execute(ActionMapping mapping,
+                                 ActionForm form,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response)
+        throws Exception {
         response.setContentType("text/plain");
+        PrintWriter writer = response.getWriter();
 
-        final PrintWriter writer = response.getWriter();
-
-        writer.println("OK");
+        try {
+          ServletContext context = getServlet().getServletContext();
+          DefinitionsFactoryUtil.reloadDefinitionsFactory(context);
+            writer.println("OK");
+        } catch (DefinitionsFactoryException e) {
+            writer.println("FAIL - " + e.toString());
+            getServlet().log("ReloadAction", e);
+        }
 
         writer.flush();
         writer.close();
 
-        return null;
+        return (null);
+
     }
+
 }
