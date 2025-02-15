@@ -22,7 +22,8 @@ package org.apache.struts.action;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Locale;
 
 import jakarta.servlet.RequestDispatcher;
@@ -86,7 +87,7 @@ public class RequestProcessor implements Serializable {
      * initialized, keyed by the fully qualified Java class name of the
      * <code>Action</code> class.</p>
      */
-    protected HashMap<String, Action> actions = new HashMap<>();
+    protected final Map<String, Action> actions = new ConcurrentHashMap<>();
 
     /**
      * <p>The <code>ModuleConfiguration</code> with which we are
@@ -125,9 +126,7 @@ public class RequestProcessor implements Serializable {
      */
     public void init(ActionServlet servlet, ModuleConfig moduleConfig)
         throws ServletException {
-        synchronized (actions) {
-            actions.clear();
-        }
+        actions.clear();
 
         this.servlet = servlet;
         this.moduleConfig = moduleConfig;
@@ -198,9 +197,7 @@ public class RequestProcessor implements Serializable {
             ActionForward forward = processException(request, response, e, form, mapping);
             processForwardConfig(request, response, forward);
             return;
-        } catch (IOException e) {
-            throw e;
-        } catch (ServletException e) {
+        } catch (IOException | ServletException e) {
             throw e;
         }
 
@@ -241,9 +238,11 @@ public class RequestProcessor implements Serializable {
      *         the current request.
      * @throws IOException if an input/output error occurs
      */
-    protected Action processActionCreate(HttpServletRequest request,
-        HttpServletResponse response, ActionMapping mapping)
-        throws IOException {
+    protected Action processActionCreate(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            ActionMapping mapping
+    ) throws IOException {
         // Acquire the Action instance we will be using (if there is one)
         String className = mapping.getType();
 
@@ -252,21 +251,11 @@ public class RequestProcessor implements Serializable {
         // If there were a mapping property indicating whether
         // an Action were a singleton or not ([true]),
         // could we just instantiate and return a new instance here?
-        Action instance;
-
-        synchronized (actions) {
-            // Return any existing Action instance of this class
-            instance = actions.get(className);
-
-            if (instance != null) {
-                log.trace("  Returning existing Action instance");
-
-                return (instance);
-            }
-
+        Action action = actions.computeIfAbsent(className, key -> {
             // Create and return a new Action instance
             log.trace("  Creating new Action instance");
 
+            Action instance;
             try {
                 instance = (Action) RequestUtils.applicationInstance(className);
 
@@ -278,20 +267,24 @@ public class RequestProcessor implements Serializable {
                         mapping.getPath(), mapping.toString()))
                     .setCause(e).log();
 
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    getInternal().getMessage("actionCreate", mapping.getPath()));
-
                 return (null);
             }
-
-            actions.put(className, instance);
 
             if (instance.getServlet() == null) {
                 instance.setServlet(this.servlet);
             }
+
+            return instance;
+        });
+
+        if (action == null) {
+            response.sendError(
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    getInternal().getMessage("actionCreate", mapping.getPath())
+            );
         }
 
-        return (instance);
+        return (action);
     }
 
     /**
