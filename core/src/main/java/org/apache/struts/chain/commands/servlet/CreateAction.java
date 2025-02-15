@@ -20,9 +20,6 @@
  */
 package org.apache.struts.chain.commands.servlet;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.chain.Constants;
@@ -31,8 +28,12 @@ import org.apache.struts.chain.contexts.ActionContext;
 import org.apache.struts.chain.contexts.ServletActionContext;
 import org.apache.struts.config.ActionConfig;
 import org.apache.struts.config.ModuleConfig;
+import org.apache.struts.util.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>Concrete implementation of <code>AbstractCreateAction</code> for use in
@@ -52,9 +53,11 @@ public class CreateAction
     /* :TODO The Action class' dependency on having its "servlet" property set
      * requires this API-dependent subclass of AbstractCreateAction.
      */
-    protected synchronized Action getAction(ActionContext context, String type,
-        ActionConfig actionConfig)
-        throws Exception {
+    protected Action getAction(
+            ActionContext context,
+            String type,
+            ActionConfig actionConfig
+    ) throws Exception {
 
         ServletActionContext saContext = (ServletActionContext) context;
         ActionServlet actionServlet = saContext.getActionServlet();
@@ -62,24 +65,26 @@ public class CreateAction
         ModuleConfig moduleConfig = actionConfig.getModuleConfig();
         String actionsKey = Constants.ACTIONS_KEY + moduleConfig.getPrefix();
         @SuppressWarnings("unchecked")
-        Map<String, Action> actions = (Map<String, Action>) context.getApplicationScope().get(actionsKey);
+        Map<String, Try<Action>> actions = (Map<String, Try<Action>>) context.getApplicationScope().get(actionsKey);
 
         if (actions == null) {
-            actions = new HashMap<>();
-            context.getApplicationScope().put(actionsKey, actions);
+            synchronized (this) {
+                //noinspection unchecked
+                actions = (Map<String, Try<Action>>) context.getApplicationScope().get(actionsKey);
+                if (actions == null) {
+                    actions = new ConcurrentHashMap<>();
+                    context.getApplicationScope().put(actionsKey, actions);
+                }
+            }
         }
 
-        Action action = null;
+        Action action;
 
         try {
             if (actionConfig.isSingleton()) {
-                synchronized (actions) {
-                    action = actions.get(type);
-                    if (action == null) {
-                        action = createAction(context, type);
-                        actions.put(type, action);
-                    }
-                }
+                action = actions
+                        .computeIfAbsent(type, key -> Try.ofCallable(() -> createAction(context, type)))
+                        .get();
             } else {
                 action = createAction(context, type);
             }
