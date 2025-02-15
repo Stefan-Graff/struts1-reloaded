@@ -38,9 +38,9 @@ import java.util.Map;
  * session-scoped resources and services</p>
  */
 public interface ActionContext extends Context {
-    public static final String APPLICATION_SCOPE = "application";
-    public static final String SESSION_SCOPE = "session";
-    public static final String REQUEST_SCOPE = "request";
+    String APPLICATION_SCOPE = "application";
+    String SESSION_SCOPE = "session";
+    String REQUEST_SCOPE = "request";
 
     // -------------------------------
     // General Application Support
